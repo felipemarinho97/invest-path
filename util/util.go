@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"context"
@@ -18,7 +18,7 @@ func GetEnvOrFail(envName string) string {
 	return env
 }
 
-func endpointResolver(service, region string) (aws.Endpoint, error) {
+func endpointResolver(service, region string, options ...interface{}) (aws.Endpoint, error) {
 	return aws.Endpoint{
 		URL:               "http://localstack:4566",
 		HostnameImmutable: true,
@@ -34,7 +34,7 @@ func LoadAWSConfig() (aws.Config, error) {
 		return aws.Config{}, err
 	}
 	if os.Getenv("ENVIRONMENT") == "DEVELOPMENT" {
-		cfg.EndpointResolver = aws.EndpointResolverFunc(endpointResolver)
+		cfg.EndpointResolverWithOptions = aws.EndpointResolverWithOptionsFunc(endpointResolver)
 	}
 	return cfg, nil
 }
